@@ -5,6 +5,16 @@ const app = express();
 
 app.use(express.json());
 
+const reqLogger = (req, res, next) => {
+    console.log(`Method => ${req.method}`);
+    console.log(`Path => ${req.path}`);
+    console.log(`Body => ${req.body}`);
+    console.log(`Params => ${req.params}`);
+    next();
+};
+
+app.use(reqLogger);
+
 let notes = [];
 
 app.get('/', (req, res) => {
@@ -41,8 +51,6 @@ app.post('/api/notes', (req, res) => {
         });
     }
 
-    console.log(body);
-
     const note = {
         id: maxId + 1,
         data: new Date(),
@@ -61,6 +69,12 @@ app.delete('/api/notes/:id', (req, res) => {
 
     res.status(204).end();
 });
+
+const unknownEndpoint = (req, res) => {
+    res.status(404).json({ error: 'No such endpoint' })
+};
+
+app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}!`);
