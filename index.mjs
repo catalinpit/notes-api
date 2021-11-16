@@ -1,9 +1,11 @@
 import express, { response } from 'express';
+import cors from 'cors';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const reqLogger = (req, res, next) => {
     console.log(`Method => ${req.method}`);
