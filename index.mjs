@@ -1,8 +1,8 @@
 import {} from 'dotenv/config';
-
 import express from 'express';
 import cors from 'cors';
-import { Note } from './src/models/Note.mjs'
+import { Note } from './src/models/Note.mjs';
+import { errorHandler, unknownEndpoint, reqLogger } from './src/middleware/handlers.mjs';
 import './src/db/mongoose.mjs';
 
 const PORT = process.env.PORT || 3001;
@@ -10,14 +10,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-
-const reqLogger = (req, res, next) => {
-    console.log(`Method => ${req.method}`);
-    console.log(`Path => ${req.path}`);
-    console.log(`Body => ${req.body}`);
-    console.log(`Params => ${req.params}`);
-    next();
-};
 
 app.use(reqLogger);
 
@@ -31,7 +23,7 @@ app.get('/api/notes', (req, res) => {
     });
 });
 
-app.get('/api/notes/:id', (req, res) => {
+app.get('/api/notes/:id', (req, res, next) => {
     Note.findById(req.params.id)
     .then(note => {
         if (note) {
@@ -40,9 +32,7 @@ app.get('/api/notes/:id', (req, res) => {
             res.status(404).end();
         }
     })
-    .catch(err => {
-        res.status(400).send({ error: 'Malformatted id' })
-    });
+    .catch(err => next(err));
 });
 
 app.post('/api/notes', (req, res) => {
@@ -69,11 +59,8 @@ app.delete('/api/notes/:id', (req, res) => {
     const id = Number(req.params.id);
 });
 
-const unknownEndpoint = (req, res) => {
-    res.status(404).json({ error: 'No such endpoint' })
-};
-
 app.use(unknownEndpoint);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}!`);
