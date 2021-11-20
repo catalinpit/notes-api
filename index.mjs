@@ -1,9 +1,8 @@
-import express, { response } from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { Note } from './src/models/Note.mjs'
+import {} from 'dotenv/config';
 
-dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import { Note } from './src/models/Note.mjs'
 import './src/db/mongoose.mjs';
 
 const PORT = process.env.PORT || 3001;
