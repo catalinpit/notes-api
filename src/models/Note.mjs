@@ -1,8 +1,15 @@
 import mongoose from 'mongoose';
 
 const noteSchema = new mongoose.Schema({
-    content: String,
-    date: Date,
+    content: {
+        type: String,
+        minlength: 5,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
     important: Boolean,
 });
 
@@ -16,4 +23,4 @@ noteSchema.set('toJSON', {
 
 const Note = mongoose.model('Note', noteSchema);
 
-export { Note }
+export { Note };

@@ -34,14 +34,8 @@ app.get('/api/notes/:id', (req, res, next) => {
     .catch(err => next(err));
 });
 
-app.post('/api/notes', (req, res) => {
+app.post('/api/notes', (req, res, next) => {
     const body = req.body;
-
-    if (body.content === undefined) {
-        return res.status(400).json({
-            error: 'missing content'
-        });
-    }
 
     const note = new Note({
         content: body.content,
@@ -52,6 +46,7 @@ app.post('/api/notes', (req, res) => {
     note.save().then(newNote => {
         res.json(newNote);
     })
+    .catch(err => next(err));
 });
 
 app.put('/api/notes/:id', (req, res, next) => {
