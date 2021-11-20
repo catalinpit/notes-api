@@ -21,8 +21,6 @@ const reqLogger = (req, res, next) => {
 
 app.use(reqLogger);
 
-let notes = [];
-
 app.get('/', (req, res) => {
     res.send('Notes API');
 });
@@ -45,30 +43,23 @@ app.get('/api/notes/:id', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
-    // not the recommended way to do this
-    // change asap
-    const maxId = notes.length > 0
-        ? Math.max(...notes.map(n => n.id))
-        : 0;
-
     const body = req.body;
 
-    if (!body.content) {
+    if (body.content === undefined) {
         return res.status(400).json({
             error: 'missing content'
         });
     }
 
-    const note = {
-        id: maxId + 1,
-        data: new Date(),
+    const note = new Note({
         content: body.content,
+        date: new Date(),
         important: body.important
-    }
+    });
 
-    notes = notes.concat(note);
-
-    res.json(note);
+    note.save().then(newNote => {
+        res.json(newNote);
+    })
 });
 
 app.delete('/api/notes/:id', (req, res) => {
