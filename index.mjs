@@ -10,7 +10,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors());
-
 app.use(reqLogger);
 
 app.get('/', (req, res) => {
@@ -55,8 +54,12 @@ app.post('/api/notes', (req, res) => {
     })
 });
 
-app.delete('/api/notes/:id', (req, res) => {
-    const id = Number(req.params.id);
+app.delete('/api/notes/:id', (req, res, next) => {
+    Note.findByIdAndRemove(req.params.id)
+    .then(result => {
+        res.status(204).end();
+    })
+    .catch(err => next(err));
 });
 
 app.use(unknownEndpoint);
