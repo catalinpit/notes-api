@@ -1,5 +1,9 @@
 import express, { response } from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -17,6 +21,24 @@ const reqLogger = (req, res, next) => {
 
 app.use(reqLogger);
 
+mongoose.connect(process.env.DB_URI);
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    date: Date,
+    important: Boolean,
+});
+
+const Note = mongoose.model('Note', noteSchema);
+
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString();
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+});
+
 let notes = [];
 
 app.get('/', (req, res) => {
@@ -24,7 +46,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-    res.json(notes);
+    Note.find({}).then(notes => {
+        res.json(notes);
+    });
 });
 
 app.get('/api/notes/:id', (req, res) => {
