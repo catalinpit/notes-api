@@ -28,4 +28,4 @@ const reqLogger = (req, res, next) => {
 	next();
 };
 
-export { errorHandler, unknownEndpoint, reqLogger };
+module.exports = { errorHandler, unknownEndpoint, reqLogger };

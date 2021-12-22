@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const noteSchema = new mongoose.Schema({
 	content: {
@@ -23,4 +23,4 @@ noteSchema.set('toJSON', {
 
 const Note = mongoose.model('Note', noteSchema);
 
-export { Note };
+module.exports = Note;
