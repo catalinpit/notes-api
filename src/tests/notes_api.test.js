@@ -35,16 +35,18 @@ test('notes are returned as json', async () => {
         .expect('Content-Type', /application\/json/)
 });
 
-test('there are two notes', async () => {
+test('all notes are returned', async () => {
     const response = await api.get('/api/notes');
 
     expect(response.body).toHaveLength(initialNotes.length);
 });
 
-test('the second note is about MongoDB', async () => {
+test('a specific note is within the returned notes', async () => {
     const response = await api.get('/api/notes');
 
-    expect(response.body[1].content).toBe('Learn MongoDB');
+    const notes = response.body.map(note => note.content);
+
+    expect(notes).toContain('Learn MongoDB');
 });
 
 afterAll(() => {
