@@ -1,5 +1,6 @@
 const { PORT } = require('./src/utils/config');
 const express = require('express');
+require('express-async-errors');
 const cors = require('cors');
 const { errorHandler, unknownEndpoint, reqLogger } = require('./src/middleware/handlers');
 const logger = require('./src/utils/logger');
