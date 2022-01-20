@@ -7,11 +7,7 @@ const Note = require('../models/Note');
 
 beforeEach(async () => {
     await Note.deleteMany({});
-
-    for (let note of helper.initialNotes) {
-        let noteObject = new Note(note);
-        await noteObject.save();
-    }
+    await Note.insertMany(helper.initialNotes);
 });
 
 describe('there are notes saved', () => {
@@ -38,7 +34,7 @@ describe('there are notes saved', () => {
 });
 
 describe('testing a specific note', () => {
-    test('a specific note can be retrieved', async () => {
+    test('a specific note with a valid ID can be retrieved', async () => {
         const notes = await helper.notesInDb();
     
         const resultNote = await api
@@ -49,6 +45,22 @@ describe('testing a specific note', () => {
         const viewNote = JSON.parse(JSON.stringify(resultNote));
     
         expect(resultNote.text).toEqual(viewNote.text);
+    });
+
+    test('a specific note that does not exist fails with status code 404', async () => {
+        const nonExistingNote = await helper.nonExistingId();
+    
+        await api
+            .get(`/api/notes/${nonExistingNote}`)
+            .expect(404);
+    });
+
+    test('a specific note with invalid ID fails with status code 400', async () => {
+        const invalidId = '5a3d5da59070081a82a3445';
+
+        await api
+            .get(`/api/notes/${invalidId}`)
+            .expect(400);
     });
 });
 
